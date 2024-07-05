@@ -54,6 +54,7 @@ source env/bin/activate # Activate virtual environment
 pip3 install -r requirements.txt
 # python3 main.py
 # alternatively
+chmod +x run_main.sh
 ./run_main.sh
 
 # For more detail refer examples in ./user_data/tasks/
