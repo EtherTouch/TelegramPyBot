@@ -27,6 +27,9 @@ class Chat:
         self._chat_messages: List[str] = []
 
     def _go_back(self):
+        if len(self._chat_messages) == 0:
+            self._chat_state = WaitingPyClass()
+            return
         # remove the last message
         self._chat_messages.pop()
         # update the chat state
