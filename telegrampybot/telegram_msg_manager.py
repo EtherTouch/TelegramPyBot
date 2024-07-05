@@ -2,7 +2,7 @@ import asyncio
 import logging
 from typing import List
 
-from telegram import Update, Message, InlineKeyboardMarkup
+from telegram import Update, Message, InlineKeyboardMarkup, CallbackQuery
 from telegram.ext import ContextTypes, Application
 
 from telegrampybot.configuration import Configuration
@@ -53,7 +53,7 @@ class TelegramMsgManager:
             if isinstance(reply_markup, InlineKeyboardMarkup) and len(reply_markup.inline_keyboard) != 0:
                 self._conversation_handler.latest_query_msg_ids[chat_id] = result.message_id
         elif update.callback_query is not None:
-            query = update.callback_query
+            query: CallbackQuery = update.callback_query
             chat_id = query.from_user.id
             # CallbackQueries need to be answered, even if no notification to the user is needed
             # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
@@ -64,14 +64,19 @@ class TelegramMsgManager:
             else:
                 last_query_id = self._conversation_handler.latest_query_msg_ids[chat_id]
                 if last_query_id > query.message.message_id:
-                    logger.warning(f"Old query id: {query.message.message_id}")
-                    # collapse the inline keyboard and do nothing
-                    await query.edit_message_text(
-                        **{
-                            TEXT_TEXT: query.data,
-                            TEXT_REPLY_MARKUP: InlineKeyboardMarkup(())
-                        }
-                    )
+                    try:
+                        query_message: Message = query.message
+                        query_text_message = query_message.text
+                        logger.warning(f"Old query id: {query.message.message_id}")
+                        # collapse the inline keyboard and do nothing
+                        await query.edit_message_text(
+                            **{
+                                TEXT_TEXT: query_text_message,
+                                TEXT_REPLY_MARKUP: InlineKeyboardMarkup(())
+                            }
+                        )
+                    except Exception as e:
+                        pass
                     return
 
             chat_id, reply = self._conversation_handler.receive_conversation(
