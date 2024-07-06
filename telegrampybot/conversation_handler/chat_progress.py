@@ -27,7 +27,8 @@ class ChatProgress:
             self._chat_progress[chat_id] = Chat(chat_id)
             return
         chat = self._chat_progress[chat_id]
-        if message == TEXT_SLASH_START and not isinstance(chat.chat_state(), WaitingArgument):
+        # if message == TEXT_SLASH_START and not isinstance(chat.chat_state(), WaitingArgument):
+        if message == TEXT_SLASH_START:
             self.reset_chat_progress(chat_id)
             return
         elif message == TEXT_BACK and not isinstance(chat.chat_state(), WaitingArgument):
