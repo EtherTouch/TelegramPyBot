@@ -11,6 +11,7 @@ from telegrampybot.configuration import Configuration
 from telegrampybot.constants.text_constants import TEXT_STATUS, TEXT_MSG, TEXT_POST_CAP, TEXT_SLASH_UPDATE, \
     TEXT_SLASH_UPDATE_SLASH
 from telegrampybot.structures.flask_message import FlaskMessage
+from telegrampybot.structures.meta_data import MetaData
 from telegrampybot.util.log_util import getlogger
 from telegrampybot.util.util import get_ip
 
@@ -51,7 +52,9 @@ class FlaskServer:
                 log_level="warning"
             )
         )
+        update_addr=f"http://{get_ip(self._configuration.flask_ip_port.ip)}:{self._configuration.flask_ip_port.port}{TEXT_SLASH_UPDATE}"
+        MetaData.update_addr=update_addr
         logger.info(
-            f"Flask is accepting request at: http://{get_ip(self._configuration.flask_ip_port.ip)}:{self._configuration.flask_ip_port.port}{TEXT_SLASH_UPDATE}"
+            f"Flask is accepting request at: {update_addr}"
         )
         asyncio.get_event_loop().create_task(webserver.serve())
