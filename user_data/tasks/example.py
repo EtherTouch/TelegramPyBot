@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from telegrampybot.conversation_handler.chat_state import TaskDone, TaskCompletelyDone, WaitingArgument
@@ -20,8 +21,10 @@ class HelloWorld:
         print("hello")
         return TaskDone("say \"hello\"")
 
-    def hi_world(self):
+    async def hi_world(self):
         print("hi world")
+        await asyncio.sleep(10)  # Sleep for 2 seconds
+        print("Sleep complete")
         # this return value will make user to choose tasks
         return TaskCompletelyDone("We have done task completly")
 

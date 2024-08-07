@@ -17,9 +17,9 @@ class ConversationHandler:
         self._latest_query_msg_ids: Dict[int, int] = {}  # we store message id to filtre out latest message
         pass
 
-    def receive_conversation(self, update: Update, chat_id: int, message: str, context: ContextTypes.DEFAULT_TYPE) -> (
+    async def receive_conversation(self, update: Update, chat_id: int, message: str, context: ContextTypes.DEFAULT_TYPE) -> (
             int, Dict):
-        self._chat_porgress.add_chat_progress(update, chat_id, message)
+        await self._chat_porgress.add_chat_progress(update, chat_id, message)
         # get replay layout
         reply = self._reply_maker.get_reply(chat_id)
         # Replace the text with the message from return value

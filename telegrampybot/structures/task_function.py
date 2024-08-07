@@ -7,6 +7,7 @@ class TaskFunction:
         self._function_name = task_json["function"]
         self._function_alias = task_json["alias"] if "alias" in task_json else None
         self._is_kwarg_func: bool = False
+        self._is_async_function = False
         pass
 
     @property
@@ -30,4 +31,10 @@ class TaskFunction:
 
     def set_is_kwarg_func(self):
         self._is_kwarg_func = True
+        pass
+    @property
+    def is_async_func(self) -> bool:
+        return self._is_async_function
+    def set_is_async_func(self):
+        self._is_async_function = True
         pass

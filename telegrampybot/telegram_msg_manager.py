@@ -40,7 +40,7 @@ class TelegramMsgManager:
     async def _handle_telegram_update_msg(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if update.message is not None:
             logger.info(f"Received Valid message: {update.message.text} from {update.message.chat_id}")
-            chat_id, reply = self._conversation_handler.receive_conversation(
+            chat_id, reply = await self._conversation_handler.receive_conversation(
                 update,
                 update.message.chat_id,
                 update.message.text,
@@ -79,7 +79,7 @@ class TelegramMsgManager:
                         pass
                     return
 
-            chat_id, reply = self._conversation_handler.receive_conversation(
+            chat_id, reply = await self._conversation_handler.receive_conversation(
                 update,
                 query.from_user.id,
                 query.data,

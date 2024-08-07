@@ -38,7 +38,7 @@ class Chat:
         elif isinstance(self._chat_state, WaitingFunction):
             self._chat_state = WaitingPyClass()
 
-    def _add_message(self, update: Update, user: User, message: str):
+    async def _add_message(self, update: Update, user: User, message: str):
         # for logging purpose
         __msg = self._chat_messages.copy()
         __msg.append(message)
@@ -59,14 +59,14 @@ class Chat:
             if stripped_message in user.common_name_tasks[self._chat_messages[-1]].common_name_functions:
                 self._chat_messages.append(message.strip())
                 # Lets execute the function
-                return_value = Executor.execute(update, user, self._chat_messages)
+                return_value =await Executor.execute(update, user, self._chat_messages)
             else:
                 self._chat_state = WaitingFunction(
                     f"\"{stripped_message}\" is not a valid function in \"{self._chat_messages[-1]}\"")
             pass
         elif isinstance(self._chat_state, WaitingArgument):
             self._chat_messages.append(message.strip())
-            return_value = Executor.execute(update, user, self._chat_messages)
+            return_value =await Executor.execute(update, user, self._chat_messages)
             pass
         # if the task was executed, return value is not None
         if return_value is None:
@@ -99,9 +99,9 @@ class Chat:
         with self._lock:
             return self._chat_state
 
-    def add_message(self, update: Update, user: User, message: str):
+    async def add_message(self, update: Update, user: User, message: str):
         with self._lock:
-            self._add_message(update, user, message)
+            await self._add_message(update, user, message)
 
     def get_last_message(self) -> Optional[str]:
         with self._lock:  # Dont call in any function of "Chat"

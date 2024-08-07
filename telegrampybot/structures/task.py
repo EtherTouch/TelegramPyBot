@@ -1,5 +1,6 @@
 import logging
 import threading
+import inspect
 from typing import Dict
 
 from telegrampybot.executor.executor_helper import ExecutorHelper
@@ -23,18 +24,24 @@ class Task:
         for function in task_json["functions"]:
             task_function = TaskFunction(function)
             self._common_name_functions[task_function.common_name] = task_function
-        # lets check **kwarg parametre exist in the function
+        # lets check **kwarg parametre exist in the function and also async function
         _tmp_obj = ExecutorHelper.load_task(self.name)
         kwarg_containing_func = set()
+        async_func = set()
         for attr_name in dir(_tmp_obj):
             if attr_name.startswith("_"):
                 continue
             attr = getattr(_tmp_obj, attr_name)
-            if callable(attr) and has_kwargs_parameter(attr):
-                kwarg_containing_func.add(attr_name)
+            if callable(attr):
+                if has_kwargs_parameter(attr):
+                    kwarg_containing_func.add(attr_name)
+                if inspect.iscoroutinefunction(attr):
+                    async_func.add(attr_name)
         for k, v in self._common_name_functions.items():
             if v.function_name in kwarg_containing_func:
                 v.set_is_kwarg_func()
+            if v.function_name in async_func:
+                v.set_is_async_func()
         # end of doing searching kwarg functions
 
         if self._is_singleton:

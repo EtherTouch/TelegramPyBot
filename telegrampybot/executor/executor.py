@@ -27,9 +27,22 @@ def func_safe_wrapper(f, message: str = ""):
     return wrapper
 
 
+def async_func_safe_wrapper(f, message: str = ""):
+    async def wrapper(*args, **kwargs):
+        try:
+            return await f(*args, **kwargs)
+        except Exception as error:
+            logger.exception(
+                f"[{message}]: Unexpected error {error} calling {f}"
+            )
+            return TaskDoneWithError(f"[{message}]: Unexpected error {error} calling {f}")
+
+    return wrapper
+
+
 class Executor:
     @staticmethod
-    def execute(update: Update, user: User, conversation: List[str]):
+    async def execute(update: Update, user: User, conversation: List[str]):
         common_task_name = conversation[0]
         common_function_name = conversation[1]
         arguments = conversation[2:]
@@ -51,9 +64,18 @@ class Executor:
             kwargs = {
                 "metadata": MetaData.from_telegram_update(update)
             }
-            return_val = func_safe_wrapper(callable_func, task.name)(*arguments, **kwargs)
         else:
-            return_val = func_safe_wrapper(callable_func, task.name)(*arguments)
+            kwargs = {}
+
+        if function.is_async_func:
+            return_val = await  async_func_safe_wrapper(callable_func, task.name)(*arguments, **kwargs)
+        else:
+            return_val = func_safe_wrapper(callable_func, task.name)(*arguments, **kwargs)
+        # else:
+        #     if function.is_async_func:
+        #         return_val = await async_func_safe_wrapper(callable_func, task.name)(*arguments)
+        #     else:
+        #         return_val = func_safe_wrapper(callable_func, task.name)(*arguments)
         if not isinstance(return_val, ChatState):
             return_val = TaskDone(f"Done {function.common_name}")
         return return_val

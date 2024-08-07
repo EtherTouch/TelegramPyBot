@@ -20,7 +20,7 @@ class ChatProgress:
         self._configuration: Configuration = configuration
         pass
 
-    def add_chat_progress(self,update: Update, chat_id: int, message: str):
+    async def add_chat_progress(self,update: Update, chat_id: int, message: str):
         message = message.strip()
 
         if chat_id not in self._chat_progress:
@@ -38,7 +38,7 @@ class ChatProgress:
         else:
             user: User = self._configuration.users[chat_id]
             # add message and execute function
-            self._chat_progress[chat_id].add_message(update,user, message)
+            await self._chat_progress[chat_id].add_message(update,user, message)
 
     def reset_chat_progress(self, chat_id: int):
         self._chat_progress[chat_id]._reset()
