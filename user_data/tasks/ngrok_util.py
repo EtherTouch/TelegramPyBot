@@ -21,7 +21,7 @@ class NgrokProcessHelper:
 
     def start_ngrok(self, *args):
         meta_data: MetaData = args[0]
-        command = ["ngrok", "tcp", "22", "--log=stdout"]
+        command = ["/usr/local/bin/ngrok", "tcp", "22", "--log=stdout"]
         self._ngrok_subprocess = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         for line in self._ngrok_subprocess.stdout:
             # print(line)
