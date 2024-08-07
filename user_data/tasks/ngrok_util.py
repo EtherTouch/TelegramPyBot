@@ -31,6 +31,8 @@ class NgrokProcessHelper:
                     continue
                 url = match.group(1)
                 self._threaded_send_update(meta_data, f"Ngrok running at:\n{url}")
+                time.sleep(1.5)
+                self._threaded_send_update(meta_data, f"@{url.split('//')[1].split(':')[0]} -p {url.split(':')[2]}")
 
     def _threaded_send_update(self, metadata: MetaData, msg):
         threading.Thread(target=self._send_update, args=[metadata, msg, ], daemon=True).start()
