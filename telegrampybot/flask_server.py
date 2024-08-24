@@ -9,7 +9,7 @@ from flask import Flask, request, jsonify
 
 from telegrampybot.configuration import Configuration
 from telegrampybot.constants.text_constants import TEXT_STATUS, TEXT_MSG, TEXT_POST_CAP, TEXT_SLASH_UPDATE, \
-    TEXT_SLASH_UPDATE_SLASH
+    TEXT_SLASH_UPDATE_SLASH, TEXT_SLASH_STATUS, TEXT_SLASH_STATUS_SLASH, TEXT_GET_CAP
 from telegrampybot.structures.flask_message import FlaskMessage
 from telegrampybot.structures.meta_data import MetaData
 from telegrampybot.util.log_util import getlogger
@@ -42,6 +42,11 @@ class FlaskServer:
             else:
                 return jsonify({TEXT_STATUS: False, TEXT_MSG: f"got a non json data"}), HTTPStatus.BAD_REQUEST
 
+        @self._flask_app.route(TEXT_SLASH_STATUS, methods=[TEXT_GET_CAP])
+        @self._flask_app.route(TEXT_SLASH_STATUS_SLASH, methods=[TEXT_GET_CAP])
+        async def status():
+            return jsonify({TEXT_STATUS: True}), HTTPStatus.OK
+
     def serve(self):
         webserver = uvicorn.Server(
             config=uvicorn.Config(
@@ -52,8 +57,8 @@ class FlaskServer:
                 log_level="warning"
             )
         )
-        update_addr=f"http://{get_ip(self._configuration.flask_ip_port.ip)}:{self._configuration.flask_ip_port.port}{TEXT_SLASH_UPDATE}"
-        MetaData.update_addr=update_addr
+        update_addr = f"http://{get_ip(self._configuration.flask_ip_port.ip)}:{self._configuration.flask_ip_port.port}{TEXT_SLASH_UPDATE}"
+        MetaData.update_addr = update_addr
         logger.info(
             f"Flask is accepting request at: {update_addr}"
         )
