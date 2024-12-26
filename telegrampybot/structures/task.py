@@ -3,6 +3,7 @@ import threading
 import inspect
 from typing import Dict
 
+from telegrampybot.constants.text_constants import TEXT_MAX_CULUMN
 from telegrampybot.executor.executor_helper import ExecutorHelper
 from telegrampybot.structures.task_function import TaskFunction
 from telegrampybot.util.log_util import getlogger
@@ -18,6 +19,7 @@ class Task:
         self._name = name.strip()  # this is the class name in .py file
         self._task_description = task_json["desc"] if "desc" in task_json else self._name
         self._task_alias_name = task_json["alias"] if "alias" in task_json else None
+        self._max_keyboard_coulumn = task_json[TEXT_MAX_CULUMN] if TEXT_MAX_CULUMN in task_json else None
         # if it is not singleton we will call the class for each user id
         self._is_singleton = task_json["singleton"] if "singleton" in task_json else False
         self._common_name_functions: Dict[str, TaskFunction] = {}
@@ -58,6 +60,10 @@ class Task:
             if chat_id not in self._object:
                 self._object[chat_id] = ExecutorHelper.load_task(self.name)
             return self._object[chat_id]
+
+    @property
+    def max_keyboard_coulumn(self):
+        return self._max_keyboard_coulumn
 
     @property
     def name(self) -> str:

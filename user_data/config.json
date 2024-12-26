@@ -24,6 +24,7 @@
       "desc": "It will print texts",
       "alias": "Hello",
       "singleton": true,
+      "max_column": 2,
       "functions": [
         {
           "function": "hello_user"

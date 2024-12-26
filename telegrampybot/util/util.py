@@ -75,7 +75,7 @@ def inline_keyboard_button_maker(opt: str):
     return InlineKeyboardButton(opt, callback_data=opt)
 
 
-def make_inline_keyboard_markup(options: List[str]) -> ReplyMarkup:
+def make_inline_keyboard_markup(options: List[str],*args) -> ReplyMarkup:
     # max word count per row is 35
     # for s in options:
     #     print(
@@ -91,7 +91,7 @@ def make_inline_keyboard_markup(options: List[str]) -> ReplyMarkup:
     return reply_markup
 
 
-def make_reply_keyboard_markup(options: List[str]) -> ReplyMarkup:
+def make_reply_keyboard_markup(options: List[str], max_keyboard_coulumn) -> ReplyMarkup:
     # max word count per row is 38
     # for s in options:
     #     print(
@@ -106,7 +106,13 @@ def make_reply_keyboard_markup(options: List[str]) -> ReplyMarkup:
     # max_row_count = 3
     # keyboard = [inline_keyboard[i:i + max_row_count] for i in range(0, len(inline_keyboard), max_row_count)]
     #
-    keyboard = keyboard_maker_logic1(options, 38, KeyboardButton)
+    if max_keyboard_coulumn is None:
+        keyboard = keyboard_maker_logic1(options, 38, KeyboardButton)
+    else:
+        inline_keyboard = [KeyboardButton(str(opt)) for opt in options]
+        keyboard = [inline_keyboard[i:i + max_keyboard_coulumn] for i in
+                    range(0, len(inline_keyboard), max_keyboard_coulumn)]
+
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 

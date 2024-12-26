@@ -29,6 +29,7 @@ class ReplyMaker:
         message: str = ""
         options: List[str] = []
         common_name_task_dict: Dict[str, Task] = self._configuration.users[chat_id].common_name_tasks
+        max_keyboard_column = None
         if isinstance(chat.chat_state(), WaitingPyClass):
             # lets check if any message stored in the chat state
             if chat.chat_state().is_message_empty():
@@ -50,10 +51,11 @@ class ReplyMaker:
             task_functions: Dict[str, TaskFunction] = task.common_name_functions
             options = list(task_functions.keys())
             options.append(TEXT_BACK)
+            max_keyboard_column = task.max_keyboard_coulumn
         elif isinstance(chat.chat_state(), WaitingArgument):
             message = chat.chat_state().message
 
-        reply_markup = self._keyboard_maker(options)
+        reply_markup = self._keyboard_maker(options, max_keyboard_column)
         message = self._message_wrapper(message)
         return {
             TEXT_TEXT: message,
